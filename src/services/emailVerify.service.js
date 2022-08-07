@@ -31,7 +31,7 @@ class EmailVerifyService {
   /**
    * 删除验证码
    */
-  async remove(email) {
+  async destroy(email) {
     const res = await EmailVerify.destroy({ where: { email } });
     // 返回删除成功的数量
     return res;

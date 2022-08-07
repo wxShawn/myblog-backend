@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/sequelize');
 
-const EmailVerify = sequelize.define('zzb_emailverify', {
+const EmailVerify = sequelize.define('blog_emailverify', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,

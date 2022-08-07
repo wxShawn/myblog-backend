@@ -19,7 +19,7 @@ class EmailVerifyController {
     const expire = 5;
     
     // 删除旧的验证码（如果存在）
-    await emailVerifyService.remove(email);
+    await emailVerifyService.destroy(email);
 
     // 将新验证码存入数据库
     await emailVerifyService.save({ email, verifyCode });

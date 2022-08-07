@@ -27,7 +27,7 @@ module.exports = {
     }
     
     // 验证完成，删除验证码
-    await emailVerifyService.remove(email);
+    await emailVerifyService.destroy(email);
     
     await next();
   }
