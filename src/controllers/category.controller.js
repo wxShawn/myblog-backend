@@ -1,20 +1,21 @@
 const categoryService = require("../services/category.service");
-const { nameRegExp, idRegExp } = require("../utils/regexp");
+const paramsValidator = require("../utils/paramsValidator");
 const res = require('../utils/res');
 
 class CategoryController {
   // 新建分类
-  async createCategory(ctx, next) {
+  async createCategory(ctx) {
     const { name } = ctx.request.body;
-    if (!name || !nameRegExp.test(name)) {
+    // 参数校验
+    const errorList = paramsValidator.validate({ categoryName: name }, ['name']);
+    if (errorList.length > 0) {
       return res.error(ctx, {
         status: 400,
-        msg: '无效参数: name',
-        result: '',
+        msg: '无效的参数',
+        result: { errorList },
       });
     }
     const newCategory = await categoryService.create(name);
-    console.log(newCategory);
     if (!newCategory) {
       return res.error(ctx, {
         status: 400,
@@ -30,16 +31,8 @@ class CategoryController {
   }
 
   // 删除分类
-  async deleteCategory(ctx, next) {
-    let { id } = ctx.params;
-    if (!id || !idRegExp.test(id)) {
-      return res.error(ctx, {
-        status: 400,
-        msg: '无效参数: id',
-        result: '',
-      });
-    }
-    id = Math.floor(id);
+  async deleteCategory(ctx) {
+    const { id } = ctx.params;
     const result = await categoryService.destroy(id);
     if (result != 1) {
       return res.error(ctx, {
@@ -56,22 +49,15 @@ class CategoryController {
   }
 
   // 更新分类
-  async updateCategory(ctx, next) {
-    let { id } = ctx.params;
-    if (!id || !idRegExp.test(id)) {
-      return res.error(ctx, {
-        status: 400,
-        msg: '无效参数: id',
-        result: '',
-      });
-    }
-    id = Math.floor(id);
+  async updateCategory(ctx) {
+    const { id } = ctx.params;
     const { name } = ctx.request.body;
-    if (!name || !nameRegExp.test(name)) {
+    const errorList = paramsValidator.validate({ categoryName: name }, ['name']);
+    if (errorList.length > 0) {
       return res.error(ctx, {
         status: 400,
-        msg: '无效参数: name',
-        result: '',
+        msg: '参数不合法',
+        result: { errorList },
       });
     }
     const result = await categoryService.update(id, name);
@@ -90,16 +76,8 @@ class CategoryController {
   }
 
   // 根据ID获取单个分类
-  async getCategory(ctx, next) {
+  async getCategory(ctx) {
     let { id } = ctx.params;
-    if (!id || !idRegExp.test(id)) {
-      return res.error(ctx, {
-        status: 400,
-        msg: '无效参数: id',
-        result: '',
-      });
-    }
-    id = Math.floor(id);
     const result = await categoryService.getOneById(id);
     if (!result) {
       return res.error(ctx, {
@@ -115,11 +93,23 @@ class CategoryController {
     });
   }
 
-  // 获取满足条件的所有分类，支持名称的模糊查询
-  async getCategoryList(ctx, next) {
-    let { page = 1, pageSize = 20, name } = ctx.query;
-    const filter = { page: Math.floor(page), pageSize: Math.floor(pageSize), name };
-    !name && (filter.name = '');
+  // 获取满足条件的所有分类，名称模糊查询
+  async getCategoryList(ctx) {
+    let { page = 1, pageSize = 20, name = '' } = ctx.query;
+    page = Math.floor(page);
+    pageSize = Math.floor(pageSize);
+    const errorList = paramsValidator.validate(
+      { page, pageSize, categoryName: name },
+      ['page', 'pageSize', 'name']
+    );
+    if (errorList.length > 0) {
+      return res.error(ctx, {
+        status: 400,
+        msg: '参数不合法',
+        result: { errorList },
+      });
+    }
+    const filter = { page, pageSize, name };
     const list = await categoryService.getAll(filter);
     return res.success(ctx, {
       status: 200,

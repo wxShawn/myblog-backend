@@ -12,7 +12,7 @@ const Category = sequelize.define('blog_category', {
 });
 
 Category.hasMany(Article, { foreignKey: 'categoryId' });
-Article.belongsTo(Category);
+Article.belongsTo(Category, { foreignKey: 'categoryId' });
 
 // 如果表不存在,则创建该表(如果已经存在,则不执行任何操作)
 // Category.sync();

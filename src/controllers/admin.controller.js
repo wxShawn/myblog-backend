@@ -5,7 +5,7 @@ const res = require('../utils/res');
 
 class AdminController {
   // 注册
-  async register(ctx, next) {
+  async register(ctx) {
     const { name, email, password, roleId } = ctx.request.body;
     const sqlData = await adminService.create({ name, email, password, roleId });
     return res.success(ctx, {
@@ -21,7 +21,7 @@ class AdminController {
 
 
   // 登录
-  async login(ctx, next) {
+  async login(ctx) {
     const { password, ...data } = ctx.state;
     const { id, roleId } = data;
     return res.success(ctx, {
