@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+const Article = require('../models/article.model');
 const Category = require('../models/category.model');
 
 class CategoryService {
@@ -31,10 +32,10 @@ class CategoryService {
       where: {
         name: { [Op.substring]: name, }
       },
+      include: { model: Article, attributes: ['id', 'title'] },
       offset: pageSize * (page - 1),
       limit: pageSize,
     });
-    // 返回查询结果
     return res;
   }
 }
