@@ -26,7 +26,7 @@ class EmailVerifyController {
 
     // 到达设定时间后删除验证码
     setTimeout(() => {
-      emailVerifyService.remove(email);
+      emailVerifyService.destroy(email);
     }, 1000*60*expire);
 
     // 配置邮件内容
