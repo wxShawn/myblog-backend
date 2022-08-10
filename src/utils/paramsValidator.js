@@ -92,12 +92,12 @@ class ParamsValidator {
       switch (schema.type) {
         case 'string':
           if (typeof value != 'string') errorList.push(returnKey);
-          if (schema.pattern && !schema.pattern.test(value)) errorList.push(returnKey);
+          else if (schema.pattern && !schema.pattern.test(value)) errorList.push(returnKey);
           break;
         case 'number':
           if (typeof value != 'number' || Number.isNaN(value)) errorList.push(returnKey);
-          if (schema.min && !value > schema.min) errorList.push(returnKey);
-          if (schema.max && !value < schema.max) errorList.push(returnKey);
+          else if (schema.min && !value > schema.min) errorList.push(returnKey);
+          else if (schema.max && !value < schema.max) errorList.push(returnKey);
           break;
         case 'boolean':
           if (typeof value != 'boolean') errorList.push(returnKey);

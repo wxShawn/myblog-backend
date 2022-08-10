@@ -1,17 +1,21 @@
 const bcrypt = require('bcryptjs');
 const adminService = require('../services/admin.service');
-const { nameRegExp, emailRegExp, passwordRegExp, idRegExp, verifyCodeRegexp } = require('../utils/regexp');
 const res = require('../utils/res');
+const paramsValidator = require('../utils/paramsValidator');
 
 class AdminMiddleware {
   // 检查注册信息
   async checkRegisterParams(ctx, next) {
     const { name, email, password, roleId } = ctx.request.body;
-    if (!nameRegExp.test(name) || !emailRegExp.test(email) || !passwordRegExp.test(password) || !idRegExp.test(roleId)) {
+    const errorList = paramsValidator.validate(
+      { adminName: name, email, password, id: roleId },
+      ['name', 'email', 'password', 'id']
+    );
+    if (errorList.length > 0) {
       return res.error(ctx, {
         status: 400,
-        msg: '注册信息格式错误',
-        result: '',
+        msg: '参数不合法',
+        result: { errorList },
       });
     }
     if (await adminService.findOneByEmail(email)) {
@@ -29,11 +33,12 @@ class AdminMiddleware {
   // 检查密码登录信息
   async checkPwdLoginParams(ctx, next) {
     const { email, password } = ctx.request.body;
-    if (!emailRegExp.test(email) || !passwordRegExp.test(password)) {
+    const errorList = paramsValidator.validate({ email, password });
+    if (errorList.length > 0) {
       return res.error(ctx, {
         status: 400,
-        msg: '邮箱或密码错误',
-        result: '',
+        msg: '参数不合法',
+        result: { errorList },
       });
     }
     const sqlData = await adminService.findOneByEmail(email);
@@ -52,11 +57,12 @@ class AdminMiddleware {
   // 检查邮箱验证码登录信息
   async checkVerifyCodeLoginParams(ctx, next) {
     const { email, verifyCode } = ctx.request.body;
-    if (!emailRegExp.test(email) || !verifyCodeRegexp.test(verifyCode)) {
+    const errorList = paramsValidator.validate({ email, verifyCode });
+    if (errorList.length > 0) {
       return res.error(ctx, {
         status: 400,
-        msg: '邮箱或验证码错误',
-        result: '',
+        msg: '参数不合法',
+        result: { errorList },
       });
     }
     const sqlData = await adminService.findOneByEmail(email);
@@ -100,18 +106,12 @@ class AdminMiddleware {
   // 检查用户是否存在
   async checkAdminExist(ctx, next) {
     const { email } = ctx.request.query;
-    if (!email) {
+    const errorList = paramsValidator.validate({ email });
+    if (errorList.length > 0) {
       return res.error(ctx, {
         status: 400,
-        msg: '未收到email参数',
-        result: ''
-      });
-    }
-    if (!emailRegExp.test(email)) {
-      return res.error(ctx, {
-        status: 400,
-        msg: '邮箱格式不正确',
-        result: { email },
+        msg: '参数不合法',
+        result: { errorList },
       });
     }
     const sqlData = await adminService.findOneByEmail(email);
