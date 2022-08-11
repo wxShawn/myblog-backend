@@ -18,9 +18,9 @@ class ArticleService {
   }
 
   // 更新
-  async update(id, title, content, isPublish, categoryId) {
+  async update(id, title, content, categoryId) {
     const res = await Article.update(
-      { title, content, isPublish, categoryId },
+      { title, content, categoryId },
       { where: { id } }
     );
     return res;

@@ -47,11 +47,11 @@ class ArticleController {
   // 更新文章
   async updateArticle(ctx, next) {
     const { id } = ctx.params;
-    const { title, content, isPublish, categoryId } = ctx.request.body;
+    const { title, content, categoryId } = ctx.request.body;
     // 检查参数
     const errorList = paramsValidator.validate(
-      { title, content, isPublish, id: categoryId },
-      ['title', 'content', 'isPublish', 'categoryId'],
+      { title, content, id: categoryId },
+      ['title', 'content', 'categoryId'],
     );
     if (errorList.length > 0) {
       return res.error(ctx, {
@@ -60,7 +60,7 @@ class ArticleController {
         result: { errorList },
       });
     }
-    const result = await articleService.update(id, title, content, isPublish, categoryId);
+    const result = await articleService.update(id, title, content, categoryId);
     return res.success(ctx, {
       status: 200,
       msg: '更新成功',
