@@ -33,6 +33,7 @@ class CategoryService {
         name: { [Op.substring]: name, }
       },
       include: { model: Article, attributes: ['id', 'title'] },
+      distinct: true, // 使res中的count属性不计算include的数量
       offset: pageSize * (page - 1),
       limit: pageSize,
     });
