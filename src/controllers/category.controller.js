@@ -33,6 +33,14 @@ class CategoryController {
   // 删除分类
   async deleteCategory(ctx) {
     const { id } = ctx.params;
+    const { blog_articles } = await categoryService.getOneById(id);
+    if (blog_articles.length > 0) {
+      return res.error(ctx, {
+        status: 400,
+        msg: '该分类下还有文章，无法删除',
+        result: '',
+      });
+    }
     const result = await categoryService.destroy(id);
     if (result != 1) {
       return res.error(ctx, {

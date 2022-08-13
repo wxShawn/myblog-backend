@@ -21,7 +21,10 @@ class CategoryService {
   }
 
   async getOneById(id) {
-    const res = await Category.findOne({ where: { id } });
+    const res = await Category.findOne({
+      where: { id },
+      include: { model: Article, attributes: ['id', 'title'] },
+    });
     // 返回查询结果
     return res;
   }
