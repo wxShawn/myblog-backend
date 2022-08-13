@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 
-const { register, login } = require('../controllers/admin.controller');
+const { register, login, getPersonalInfo, updatePersonalInfo } = require('../controllers/admin.controller');
 const { sendVerifyCode } = require('../controllers/emailVerify.controller');
 
 const {
@@ -11,6 +11,7 @@ const {
   verifyPassword,
   checkAdminExist,
 } = require('../middlewares/admin.middleware');
+const Auth = require('../middlewares/auth.middleware');
 const { verifyEmailCode } = require('../middlewares/emailVerify.middleware');
 
 const adminRouter = new Router({ prefix: '/admins' });
@@ -25,8 +26,8 @@ adminRouter.get('/login/email-code', checkAdminExist, sendVerifyCode);
 
 adminRouter.delete('/', );
 
-adminRouter.put('/', );
+adminRouter.put('/', new Auth().verifyAuth, updatePersonalInfo);
 
-adminRouter.get('/', );
+adminRouter.get('/', new Auth().verifyAuth, getPersonalInfo);
 
 module.exports = adminRouter;

@@ -4,12 +4,12 @@ const { JWT_SECRET } = require('../config');
 const adminService = require('../services/admin.service');
 
 class Auth {
-  roleList = [1, 2, 3];
+  #roleList = [1, 2, 3];
   // 实例化的时候传入角色id列表，设置可访问权限
   constructor(roleList) {
     // 如果未传人角色id，则默认允许所有角色访问
     if (roleList) {
-      this.roleList = roleList;
+      this.#roleList = roleList;
     }
   }
 
@@ -41,7 +41,7 @@ class Auth {
       }
       const { id, roleId } = tokenInfo;
       // 检查权限
-      if (!this.roleList.includes(roleId)) {
+      if (!this.#roleList.includes(roleId)) {
         return res.error(ctx, {
           status: 403,
           msg: '当前角色无权访问！',
@@ -51,7 +51,7 @@ class Auth {
       // 根据 id 获取所有信息
       const sqlData = await adminService.findOneById(id);
       // 将信息保存到 ctx.state
-      ctx.state = sqlData;
+      ctx.state.requester = sqlData;
 
       await next();
     }

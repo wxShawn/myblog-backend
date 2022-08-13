@@ -6,6 +6,14 @@ class AdminService {
     return res;
   }
 
+  async update(id, name, email) {
+    const res = await Admin.update(
+      { name, email },
+      { where: { id } }
+    );
+    return res;
+  }
+
   async findOneByEmail(email) {
     const res = await Admin.findOne({
       where: { email },
