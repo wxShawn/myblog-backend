@@ -2,6 +2,8 @@ const Router = require('koa-router');
 
 const { checkArticleId } = require('../middlewares/article.middleware');
 
+const Auth = require('../middlewares/auth.middleware');
+
 const {
   createArticle,
   deleteArticle,
@@ -13,13 +15,13 @@ const {
 
 const articleRouter = new Router({ prefix: '/articles' });
 
-articleRouter.post('/', createArticle);
+articleRouter.post('/', new Auth([1]).verifyAuth, createArticle);
 
-articleRouter.delete('/:id', checkArticleId, deleteArticle);
+articleRouter.delete('/:id', new Auth([1]).verifyAuth, checkArticleId, deleteArticle);
 
-articleRouter.put('/:id', checkArticleId, updateArticle);
+articleRouter.put('/:id', new Auth([1]).verifyAuth, checkArticleId, updateArticle);
 
-articleRouter.patch('/:id/isPublish', checkArticleId, updatePublishState);
+articleRouter.patch('/:id/isPublish', new Auth([1]).verifyAuth, checkArticleId, updatePublishState);
 
 articleRouter.get('/:id', checkArticleId, findOneArticle);
 
