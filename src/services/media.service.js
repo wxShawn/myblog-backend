@@ -17,12 +17,18 @@ class MediaService {
     return res;
   }
 
-  async findOne(id) {
-    const res = await Media.findOne({ id });
+  async findOneById(id) {
+    const res = await Media.findOne({ where: { id } });
+    return res;
+  }
+
+  async findOneByFilePath(path) {
+    const res = await Media.findOne({ where: { path } });
     return res;
   }
 
   async findAll(type, page, pageSize, name = '') {
+    const filter = { name: { [Op.substring]: name } };
     const typeList = [];
     switch (type) {
       case 'image':
@@ -37,11 +43,10 @@ class MediaService {
       default:
         break;
     }
+    // typeList长度大于0，加入筛选田间
+    typeList.length > 0 && Object.assign(filter, { type: { [Op.or]: [typeList] } });
     const res = await Media.findAndCountAll({
-      where: {
-        type: { [Op.or]: [typeList] },
-        name: { [Op.substring]: name }
-      },
+      where: filter,
       offset: pageSize * (page - 1),
       limit: pageSize,
     });

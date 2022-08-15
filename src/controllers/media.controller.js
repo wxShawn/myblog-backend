@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const mime = require('mime');
 const mediaService = require('../services/media.service');
 const paramsValidator = require('../utils/paramsValidator');
 const res = require('../utils/res');
@@ -70,11 +71,22 @@ class MediaController {
         result: { errorList },
       });
     }
+    const data = await mediaService.findOneById(id);
     const result = await mediaService.destroy(id);
     if (result != 1) {
       return res.error(ctx, {
         status: 400,
         msg: '文件不存在，删除失败',
+        result: '',
+      });
+    }
+    try {
+      fs.unlinkSync(path.join(__dirname, `../${data.path}`));
+    } catch (error) {
+      console.log(error);
+      return res.error(ctx, {
+        status: 400,
+        msg: '文件删除失败，请重新同步数据库',
         result: '',
       });
     }
@@ -152,17 +164,70 @@ class MediaController {
     // 获取文件
     const uploadPath = path.join(__dirname, "../uploads/");
     const fileList = fs.readdirSync(uploadPath);
-    if (fileList) {
-      for (let i = 0, len = fileList.length; i < len; i++) {
+    
+    // 获取数据库数据
+    const result = await mediaService.findAll('all', 1, 9999, '');
+    const dataList = result.rows;
+
+    // 遍历文件
+    if (fileList.length > 0) {
+      for (let i = 0, fileListLenth = fileList.length; i < fileListLenth; i++) {
+        // 文件路径
         const filePath = path.join(__dirname, `../uploads/${fileList[i]}`);
-        const file = fs.statSync(filePath);
-        console.log(file);
+        // 保存在数据库中的文件路径
+        const filePathSql = filePath.split('\\src')[1];
+        // 文件类型
+        const mimeType = mime.getType(fileList[i]);
+        // 文件大小
+        const { size } = fs.statSync(filePath);
+        // 查询数据库中是否存在此文件的数据
+        let hasData = false;
+        if (dataList.length > 0) {
+          for (let j = 0, dataLength = dataList.length; j < dataLength; j++) {
+            if (filePathSql === dataList[j].path) {
+              hasData = true;
+              break;
+            }
+          }
+        }
+        // 数据库中没有此文件数据, 创建数据
+        if (!hasData) {
+          await mediaService.create([{
+            name: '未命名',
+            type: mimeType,
+            path: filePathSql,
+            size: size,
+          }]);
+        }
       }
     }
+
+    // 遍历数据
+    if (dataList.length > 0) {
+      for (let i = 0, dataLength = dataList.length; i < dataLength; i++) {
+        // 文件真实名称
+        const realName = dataList[i].path.split('uploads\\', 2)[1];
+        // 检查uploads中是否存在对应文件
+        let hasFile = false;
+        if (fileList.length > 0) {
+          for (let j = 0, fileListLenth = fileList.length; j < fileListLenth; j++) {
+            if (realName === fileList[j]) {
+              hasFile = true;
+              break;
+            }
+          }
+        }
+        // 没有对应文件，删除数据库中的数据
+        if (!hasFile) {
+          await mediaService.destroy(dataList[i].id);
+        }
+      }
+    }
+
     return res.success(ctx, {
       status: 200,
-      msg: 'ok',
-      result: fileList,
+      msg: '同步完成',
+      result: '',
     });
   }
 }
