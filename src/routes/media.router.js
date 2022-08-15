@@ -2,7 +2,7 @@ const path = require('path')
 const Router = require('koa-router');
 const koaBody = require('koa-body');
 
-const { uploadMedia, destroyMedia, updateMedia, findAllMedia, syncDataBase } = require('../controllers/media.controller');
+const { uploadMedia, destroyMedia, updateMedia, findAllMedia, syncDataBase, findOneMedia } = require('../controllers/media.controller');
 
 const mediaRouter = new Router({ prefix: '/media' });
 
@@ -21,7 +21,7 @@ mediaRouter.delete('/:id', destroyMedia);
 
 mediaRouter.put('/:id', updateMedia);
 
-mediaRouter.get('/:id', );
+mediaRouter.get('/:id', findOneMedia);
 
 mediaRouter.get('/images', findAllMedia('image'));
 mediaRouter.get('/audios', findAllMedia('audio'));

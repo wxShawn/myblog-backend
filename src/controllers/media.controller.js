@@ -128,6 +128,33 @@ class MediaController {
     });
   }
 
+  // 查询单个
+  async findOneMedia(ctx) {
+    let { id } = ctx.params;
+    id = Math.floor(id);
+    const errorList = paramsValidator.validate({ id });
+    if (errorList.length > 0) {
+      return res.error(ctx, {
+        status: 400,
+        msg: '参数不合法',
+        result: { errorList },
+      });
+    }
+    const result = await mediaService.findOneById(id);
+    if (!result) {
+      return res.error(ctx, {
+        status: 404,
+        msg: '文件不存在',
+        result: '',
+      });
+    }
+    return res.error(ctx, {
+      status: 200,
+      msg: 'ok',
+      result: result,
+    });
+  }
+
   // 查询所有
   findAllMedia(type) {
     return async (ctx) => {
