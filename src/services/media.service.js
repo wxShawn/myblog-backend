@@ -13,7 +13,7 @@ class MediaService {
   }
 
   async update(id, name) {
-    const res = await Media.update({ name }, { where: { name } });
+    const res = await Media.update({ name }, { where: { id } });
     return res;
   }
 
@@ -22,9 +22,24 @@ class MediaService {
     return res;
   }
 
-  async findAll(page, pageSize, name = '') {
+  async findAll(type, page, pageSize, name = '') {
+    const typeList = [];
+    switch (type) {
+      case 'image':
+        typeList.push.apply(typeList, ['image/jpeg', 'image/png', 'image/gif']);
+        break;
+      case 'audio':
+        typeList.push.apply(typeList, ['audio/mpeg', 'audio/ogg', 'audio/wav']);
+        break;
+      case 'video':
+        typeList.push.apply(typeList, ['video/webm', 'video/ogg']);
+        break;
+      default:
+        break;
+    }
     const res = await Media.findAndCountAll({
       where: {
+        type: { [Op.or]: [typeList] },
         name: { [Op.substring]: name }
       },
       offset: pageSize * (page - 1),

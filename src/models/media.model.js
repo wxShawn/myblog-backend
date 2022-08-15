@@ -8,9 +8,9 @@ const Media = sequelize.define('blog_media', {
     comment: '媒体名称, 必填'
   },
   type: {
-    type: DataTypes.TINYINT,
+    type: DataTypes.CHAR(32),
     allowNull: false,
-    comment: '媒体类型, 必填, 1: 图片, 2: 音频, 3: 视频'
+    comment: '媒体类型, 必填'
   },
   path: {
     type: DataTypes.STRING,
