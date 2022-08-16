@@ -19,7 +19,7 @@ class MediaController {
       });
     }
     // 支持的格式
-    const allowType = ['image/jpeg', 'image/png', 'image/gif', 'audio/mpeg', 'audio/ogg', 'audio/wav', 'video/webm', 'video/ogg'];
+    const allowType = ['image/jpeg', 'image/png', 'image/gif', 'audio/mpeg', 'audio/ogg', 'audio/wav', 'video/mp4', 'video/webm', 'video/ogg'];
     // 检查文件格式
     for (const key in files) {
       const file = files[key];
@@ -54,7 +54,7 @@ class MediaController {
     await mediaService.create(fileList);
     return res.success(ctx, {
       status: 200,
-      msg: 'ok',
+      msg: '文件上传成功',
       result: fileList,
     });
   }

@@ -38,7 +38,7 @@ class MediaService {
         typeList.push.apply(typeList, ['audio/mpeg', 'audio/ogg', 'audio/wav']);
         break;
       case 'video':
-        typeList.push.apply(typeList, ['video/webm', 'video/ogg']);
+        typeList.push.apply(typeList, ['video/mp4', 'video/webm', 'video/ogg']);
         break;
       default:
         break;
