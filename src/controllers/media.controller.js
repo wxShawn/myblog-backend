@@ -156,29 +156,27 @@ class MediaController {
   }
 
   // 查询所有
-  findAllMedia(type) {
-    return async (ctx) => {
-      let { page = 1, pageSize = 10, name = '' } = ctx.query;
-      page = Math.floor(page);
-      pageSize = Math.floor(pageSize);
-      const errorList = paramsValidator.validate(
-        { page, pageSize, fileName: name },
-        ['page', 'pageSize', 'name']
-      );
-      if (errorList.length > 0) {
-        return res.error(ctx, {
-          status: 400,
-          msg: '参数不合法',
-          result: { errorList },
-        });
-      }
-      const result = await mediaService.findAll(type, page, pageSize, name);
-      return res.success(ctx, {
-        status: 200,
-        msg: 'ok',
-        result: result,
+  async findAllMedia (ctx) {
+    let { type, page = 1, pageSize = 10, name = '' } = ctx.query;
+    page = Math.floor(page);
+    pageSize = Math.floor(pageSize);
+    const errorList = paramsValidator.validate(
+      { page, pageSize, fileName: name },
+      ['page', 'pageSize', 'name']
+    );
+    if (errorList.length > 0) {
+      return res.error(ctx, {
+        status: 400,
+        msg: '参数不合法',
+        result: { errorList },
       });
     }
+    const result = await mediaService.findAll(type, page, pageSize, name);
+    return res.success(ctx, {
+      status: 200,
+      msg: 'ok',
+      result: result,
+    });
   }
 
   /**

@@ -23,9 +23,7 @@ mediaRouter.put('/:id', updateMedia);
 
 mediaRouter.get('/:id', findOneMedia);
 
-mediaRouter.get('/images', findAllMedia('image'));
-mediaRouter.get('/audios', findAllMedia('audio'));
-mediaRouter.get('/videos', findAllMedia('video'));
+mediaRouter.get('/', findAllMedia);
 
 // 同步数据库文件
 mediaRouter.post('/sync-database', syncDataBase);
