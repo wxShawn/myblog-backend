@@ -8,7 +8,15 @@ const static = require("koa-static");
 const app = new Koa();
 // 支持跨域请求
 app.use(cors({
-  origin: ctx => { return 'http://127.0.0.1:5173' },
+  origin: ctx => {
+    // 可跨域白名单
+    const whiteList = ['http://127.0.0.1:5173','http://127.0.0.1:5174'];
+    let url = ctx.header.referer.substring(0, ctx.header.referer.length - 1);
+    if(whiteList.includes(url)){
+        return url;
+    }
+    return 'http://127.0.0.1:3001';
+  },
 }));
 // 解析请求体
 app.use(koaBody(path));
