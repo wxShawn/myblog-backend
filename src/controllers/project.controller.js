@@ -120,7 +120,9 @@ class ProjectController {
   }
 
   async findAllProject(ctx) {
-    const { page = 1, pageSize = 10, name = '' } = ctx.query;
+    let { page = 1, pageSize = 10, name = '' } = ctx.query;
+    page = Math.floor(page);
+    pageSize = Math.floor(pageSize);
     const errorList = paramsValidator.validate(
       { page, pageSize, fileName: name },
       ['page', 'pageSize', 'name']
