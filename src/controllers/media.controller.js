@@ -199,7 +199,8 @@ class MediaController {
     if (fileList.length > 0) {
       for (let i = 0, fileListLenth = fileList.length; i < fileListLenth; i++) {
         // 文件路径
-        const filePath = path.join(__dirname, `../uploads/${fileList[i]}`);
+        let filePath = path.join(__dirname, `../uploads/${fileList[i]}`);
+        filePath = filePath.replace(/\\/g, '/');
         // 保存在数据库中的文件路径
         const filePathSql = filePath.split('/src')[1];
         // 文件类型
