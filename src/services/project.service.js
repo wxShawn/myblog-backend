@@ -34,11 +34,13 @@ class ProjectService {
     return res;
   }
 
-  async findAll(page, pageSize, name) {
+  async findAll(page, pageSize, name, includeUnpublished) {
+    const filter = { name: { [Op.substring]: name } };
+    if (!includeUnpublished) {
+      filter.isPublish = true;
+    }
     const res = await Project.findAndCountAll({
-      where: {
-        name: { [Op.substring]: name },
-      },
+      where: filter,
       offset: pageSize * (page - 1),
       limit: pageSize,
     });

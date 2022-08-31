@@ -120,7 +120,7 @@ class ProjectController {
   }
 
   async findAllProject(ctx) {
-    let { page = 1, pageSize = 10, name = '' } = ctx.query;
+    let { page = 1, pageSize = 10, name = '', includeUnpublished } = ctx.query;
     page = Math.floor(page);
     pageSize = Math.floor(pageSize);
     const errorList = paramsValidator.validate(
@@ -134,7 +134,7 @@ class ProjectController {
         result: { errorList },
       });
     }
-    const result = await projectService.findAll(page, pageSize, name);
+    const result = await projectService.findAll(page, pageSize, name, includeUnpublished);
     return res.success(ctx, {
       status: 200,
       msg: 'ok',
