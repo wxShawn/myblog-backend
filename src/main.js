@@ -10,10 +10,20 @@ const app = new Koa();
 app.use(cors({
   origin: ctx => {
     // 可跨域白名单
-    const whiteList = ['http://127.0.0.1:5173','http://127.0.0.1:5174'];
+    const whiteList = [
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'https://wxshawn.github.io/',
+    ];
+    // 静态资源所有ip地址或域名都可跨域
+    const pathReg = /\/[\w]{25}\.[a-z]+/;
+    if (pathReg.test(ctx.request.url)) {
+      return '*';
+    }
+    // 允许白名单跨域
     let url = ctx.header.referer.substring(0, ctx.header.referer.length - 1);
     if(whiteList.includes(url)){
-        return url;
+      return url;
     }
     return 'http://127.0.0.1:3001';
   },
