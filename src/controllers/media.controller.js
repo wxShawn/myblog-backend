@@ -33,10 +33,11 @@ class MediaController {
           result: '',
         })
       }
+      file.filepath = file.filepath.replace(/\\/g, '/');
       fileList.push({
         name: file.originalFilename,
         type: file.mimetype,
-        path: file.filepath.split('\\src')[1],
+        path: file.filepath.split('/src')[1],
         size: file.size
       });
       if (!allowType.includes(file.mimetype)) {
@@ -200,7 +201,7 @@ class MediaController {
         // 文件路径
         const filePath = path.join(__dirname, `../uploads/${fileList[i]}`);
         // 保存在数据库中的文件路径
-        const filePathSql = filePath.split('\\src')[1];
+        const filePathSql = filePath.split('/src')[1];
         // 文件类型
         const mimeType = mime.getType(fileList[i]);
         // 文件大小
@@ -231,7 +232,7 @@ class MediaController {
     if (dataList.length > 0) {
       for (let i = 0, dataLength = dataList.length; i < dataLength; i++) {
         // 文件真实名称
-        const realName = dataList[i].path.split('uploads\\', 2)[1];
+        const realName = dataList[i].path.split('uploads/', 2)[1];
         // 检查uploads中是否存在对应文件
         let hasFile = false;
         if (fileList.length > 0) {
