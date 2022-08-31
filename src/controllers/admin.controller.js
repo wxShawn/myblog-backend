@@ -74,6 +74,26 @@ class AdminController {
       result: '',
     })
   }
+
+  // 更新密码
+  async updatePassword(ctx) {
+    const { id } = ctx.state;
+    const { password } = ctx.request.body;
+    console.log(ctx.state);
+    const result = await adminService.updatePassword(id, password);
+    if (result[0] != 1) {
+      return res.error(ctx, {
+        status: 500,
+        msg: '修改密码失败',
+        result: '',
+      });
+    }
+    return res.success(ctx, {
+      status: 200,
+      msg: '更新成功',
+      result: '',
+    });
+  }
 }
 
 module.exports = new AdminController();

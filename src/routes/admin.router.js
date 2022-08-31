@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 
-const { register, login, getPersonalInfo, updatePersonalInfo } = require('../controllers/admin.controller');
+const { register, login, getPersonalInfo, updatePersonalInfo, updatePassword } = require('../controllers/admin.controller');
 const { sendVerifyCode } = require('../controllers/emailVerify.controller');
 
 const {
@@ -10,6 +10,7 @@ const {
   cryptPassword,
   verifyPassword,
   checkAdminExist,
+  checkUpdatePwdParams,
 } = require('../middlewares/admin.middleware');
 const Auth = require('../middlewares/auth.middleware');
 const { verifyEmailCode } = require('../middlewares/emailVerify.middleware');
@@ -29,5 +30,9 @@ adminRouter.delete('/', );
 adminRouter.put('/', new Auth().verifyAuth, updatePersonalInfo);
 
 adminRouter.get('/', new Auth().verifyAuth, getPersonalInfo);
+// 获取修改密码的验证码
+adminRouter.get('/password/email-code', checkAdminExist, sendVerifyCode);
+// 修改密码
+adminRouter.patch('/password', checkUpdatePwdParams, verifyEmailCode, cryptPassword, updatePassword);
 
 module.exports = adminRouter;

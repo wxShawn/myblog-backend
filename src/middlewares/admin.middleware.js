@@ -92,6 +92,7 @@ class AdminMiddleware {
   async verifyPassword(ctx, next) {
     const { password } = ctx.request.body;
     const sqlData = ctx.state;
+    console.log(bcrypt.compareSync(password, sqlData.password));
     if (!bcrypt.compareSync(password, sqlData.password)) {
       return res.error(ctx, {
         status: 400,
@@ -120,6 +121,30 @@ class AdminMiddleware {
         status: 404,
         msg: '该邮箱未注册',
         result: { email },
+      });
+    }
+    // 将信息保存至 ctx.state
+    ctx.state = sqlData;
+    await next();
+  }
+
+  // 检查修改密码的相关参数
+  async checkUpdatePwdParams(ctx, next) {
+    const { email, verifyCode, password } = ctx.request.body;
+    const errorList = paramsValidator.validate({ email, verifyCode, password });
+    if (errorList.length > 0) {
+      return res.error(ctx, {
+        status: 400,
+        msg: '参数不合法',
+        result: { errorList },
+      });
+    }
+    const sqlData = await adminService.findOneByEmail(email);
+    if (!sqlData) {
+      return res.error(ctx, {
+        status: 400,
+        msg: '用户尚未注册',
+        result: '',
       });
     }
     // 将信息保存至 ctx.state

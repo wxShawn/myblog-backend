@@ -14,6 +14,14 @@ class AdminService {
     return res;
   }
 
+  async updatePassword(id, password) {
+    const res = await Admin.update(
+      { password },
+      { where: { id } }
+    );
+    return res;
+  }
+
   async findOneByEmail(email) {
     const res = await Admin.findOne({
       where: { email },
