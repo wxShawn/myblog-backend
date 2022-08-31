@@ -21,9 +21,11 @@ app.use(cors({
       return '*';
     }
     // 允许白名单跨域
-    let url = ctx.header.referer.substring(0, ctx.header.referer.length - 1);
-    if(whiteList.includes(url)){
-      return url;
+    if (ctx.header.referer) {
+      let url = ctx.header.referer.substring(0, ctx.header.referer.length - 1);
+      if(whiteList.includes(url)){
+        return url;
+      }
     }
     return 'http://127.0.0.1:3001';
   },
