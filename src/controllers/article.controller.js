@@ -99,10 +99,16 @@ class ArticleController {
       result: result,
     });
   }
-
+  
   // 获取所有文章(title模糊查询)
   async findAllArticles(ctx, next) {
-    let { page = 1, pageSize = 20, title = '', categoryId = 0 } = ctx.query;
+    let {
+      page = 1,
+      pageSize = 20,
+      title = '',
+      categoryId = 0,
+      includeUnpublished
+    } = ctx.query;
     page = Math.floor(page);
     pageSize = Math.floor(pageSize);
     categoryId = Math.floor(categoryId);
@@ -118,7 +124,13 @@ class ArticleController {
         result: { errorList },
       });
     }
-    const filter = { page, pageSize, title, categoryId: categoryId === 0 ? null : categoryId };
+    const filter = {
+      page,
+      pageSize,
+      title,
+      categoryId: categoryId === 0 ? null : categoryId,
+      includeUnpublished
+    };
     const result = await articleService.findAll(filter);
     return res.success(ctx, {
       status: 200,

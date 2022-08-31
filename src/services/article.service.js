@@ -44,8 +44,11 @@ class ArticleService {
 
   // 查询满足条件的所有文章(title模糊查询)
   async findAll(filter) {
-    const { page, pageSize, title, categoryId } = filter
+    const { page, pageSize, title, categoryId, includeUnpublished } = filter
     const otherFilter = { title: { [Op.substring]: title } };
+    if (!includeUnpublished) {
+      otherFilter.isPublish = true;
+    }
     if (categoryId) otherFilter.categoryId = categoryId;
     const res = await Article.findAndCountAll({
       attributes: { exclude: ['categoryId'] },
